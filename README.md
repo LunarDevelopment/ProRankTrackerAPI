@@ -1,9 +1,9 @@
-# PHP Majestic API 
+# PHP ProRankTracker API 
 
-A package to allow communication with Majestic.com API, through production or sandbox environments. 
-
+A package to allow communication with ProRankTracker.com API, through production environment.
+ 
 ## Prerequisits 
-- An API key from [Majestic API console](https://majestic.com/account/api#api-keys)
+- An API key from [proranktracker.com API console](https://proranktracker.com/tools/api_doc)
 - PHP >5.4 
 - Composer (optional)
 
@@ -11,71 +11,72 @@ A package to allow communication with Majestic.com API, through production or sa
 
 Via composer 
 
-```composer require lunardevelopment/majestic```
+```composer require lunardevelopment/proranktracker```
 
 Via ZIP
 
 Download this ZIP and manually include 
 ```php
-require_once 'theUnzippedDirectory/src/Majestic.php'
+require_once 'theUnzippedDirectory/src/ProRankTracker.php';
 ```
 
 ## Usage 
 
-See in depth commands and parameters at [Majestic.com API Commands](https://developer-support.majestic.com/api/commands/)
+See in depth commands and parameters at [ProRankTracker.com API Commands](https://developer-support.proranktracker.com/api/commands/)
 
-### GetIndexItemInfo 
+### Get URLs and terms being tracked 
 ```php 
 
-    use LunarDevelopment\Majestic; 
+    use LunarDevelopment\ProRankTracker; 
+    
+    $email = "YOUR_EMAIL";
+    $password = "YOUR_PASSWORD";
 
-    $majestic_api_key = "YOUR_API_KEY";
-    $domain = "example.com";
+    $prt = new ProRankTracker($email, $password);
     
-    $service = new Majestic($majestic_api_key, false);
+    $data = $prt->urls_get(array(
+        'include_terms' => 1,
+        'per_page' => 100
+    ));
     
-    $params = array(  
-        'datasource'=>'fresh', 
-        'item0' => $domain , 
-        'items' => 1
-    );
-    
-    $response = $service->executeCommand('GetIndexItemInfo', $params);
-    
-    $majestic_json_data = json_encode(json_decode($response->getBody())->DataTables->Results->Data[0]);
+    if ($data->result == 'error') {
+        var_dump($data) ;
+        die;
+    }
 
-    dd($majestic_json_data); 
+    dd($data->data->urls); 
 
 ```
 
 
-### GetBackLinkData 
+### Add a new URL and terms to be tracked
 ```php 
 
+    use LunarDevelopment\ProRankTracker; 
+    
+    $email = "YOUR_EMAIL";
+    $password = "YOUR_PASSWORD";
 
-    use LunarDevelopment\Majestic; 
+    $url = "http://example.com";
 
-    $majestic_api_key = "YOUR_API_KEY";
-    $domain = "example.com";
+    $prt = new ProRankTracker($email, $password);
 
-    $service = new Majestic($majestic_api_key, false);
+    $response = $prt->urls_new(array(
+        'url' => $newUrl,
+        'terms' => array(
+            "term 1", 
+            "term 2"
+        ),
+        'se_ids' => 1, // 1 is Google.com, 3 is Bing.com, refer se.get
+        'group_ids' => array(52532),
+        'note' => 'Test FROM API',
+    ));
 
-    $params = array(
-        'item' => $domain,
-        'datasource' => 'fresh',
-        'Count' => 1000,
-        'Mode' => 1,
-        'ShowDomainInfo' => 1,
-        'MaxSourceURLsPerRefDomain' => 1,
-        'MaxSameSourceURLs' => 1,
-        'FilterTopicsRefDomainsMode' => 1
-    );
+    if ($response->result == 'error') {
+        dd($response->error_message);
+    }
 
-    $response = $service->executeCommand('GetBackLinkData', $params);
-
-    $backlinks = json_decode($response->getBody())->DataTables->BackLinks->Data;
-
-    dd($backlinks); 
+    dd($response); 
 
 ```
 
