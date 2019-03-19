@@ -1,0 +1,25 @@
+{
+    "name": "lunardevelopment/majestic",
+    "description": "Package to communicate with Majestic.com Live and Sandbox URLs.",
+    "keywords": ["api", "majestic.com", "package"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "LunarDevelopment",
+            "email": "development.lunar@gmail.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+		"php": ">=5.4",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "LunarDevelopment\\Majestic\\": "src/"
+        }
+    }
+}
